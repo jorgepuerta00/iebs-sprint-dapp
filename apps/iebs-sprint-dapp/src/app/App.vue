@@ -1,21 +1,19 @@
 <script setup lang="ts">
-import NxWelcome from './NxWelcome.vue';
-import Dropdown from './components/Dropdown.vue'
-import LayoutHeader from './components/LayoutHeader.vue'
+import { onBeforeMount, ref, watch } from 'vue';
 import {
-	useEthers,
-	useWallet,
-	displayChainName,
-	displayEther,
-	shortenAddress,
-	useEthersHooks,
-	MetaMaskConnector,
-	WalletConnectConnector,
-	CoinbaseWalletConnector,
-	SafeConnector,
-	Connector,
-} from 'vue-dapp'
-import { ref, onBeforeMount, watch } from 'vue'
+CoinbaseWalletConnector,
+Connector,
+MetaMaskConnector,
+SafeConnector,
+WalletConnectConnector,
+displayChainName,
+useEthers,
+useEthersHooks,
+useWallet
+} from 'vue-dapp';
+import NxWelcome from './NxWelcome.vue';
+import Dropdown from './components/Dropdown.vue';
+import LayoutHeader from './components/LayoutHeader.vue';
 
 const { wallet, onDisconnect, onAccountsChanged, onChainChanged } = useWallet()
 const { address, balance, chainId, isActivated, dnsAlias } = useEthers()

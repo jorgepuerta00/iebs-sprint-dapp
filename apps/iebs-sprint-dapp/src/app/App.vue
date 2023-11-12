@@ -11,12 +11,12 @@ useEthers,
 useEthersHooks,
 useWallet
 } from 'vue-dapp';
-import NxWelcome from './NxWelcome.vue';
+import NxWelcome from './components/NxWelcome.vue';
 import Dropdown from './components/Dropdown.vue';
 import LayoutHeader from './components/LayoutHeader.vue';
 
 const { wallet, onDisconnect, onAccountsChanged, onChainChanged } = useWallet()
-const { address, balance, chainId, isActivated, dnsAlias } = useEthers()
+const { chainId, isActivated, dnsAlias } = useEthers()
 const { onActivated, onChanged } = useEthersHooks()
 
 const isDev = import.meta.env.DEV
@@ -33,15 +33,15 @@ let connectors: Connector[] = [
     qrModalOptions: {
       themeMode: 'dark',
       themeVariables: undefined,
-      chainImages: undefined,
+      //chainImages: undefined,
       desktopWallets: undefined,
       walletImages: undefined,
       mobileWallets: undefined,
       enableExplorer: true,
-      explorerAllowList: undefined,
-      tokenImages: undefined,
+      //explorerAllowList: undefined,
+      //tokenImages: undefined,
       privacyPolicyUrl: undefined,
-      explorerDenyList: undefined,
+      //explorerDenyList: undefined,
       termsOfServiceUrl: undefined,
     },
   }),

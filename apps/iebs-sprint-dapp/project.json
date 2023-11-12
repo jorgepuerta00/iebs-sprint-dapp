@@ -6,18 +6,34 @@
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["apps/iebs-sprint-dapp/**/*.{ts,tsx,js,jsx,vue}"]
+        "lintFilePatterns": [
+          "apps/iebs-sprint-dapp/**/*.{ts,tsx,js,jsx,vue}"
+        ]
       }
     },
     "build": {
       "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/iebs-sprint-dapp",
-        "skipTypeCheck": true
+        "skipTypeCheck": true,
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/iebs-sprint-dapp/public",
+            "output": "./"
+          }
+        ],
+        "styles": [
+          "apps/iebs-sprint-dapp/src/style.css"
+        ]
       },
       "configurations": {
         "development": {
@@ -62,7 +78,9 @@
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
       "options": {
         "passWithNoTests": true,
         "reportsDirectory": "../../coverage/apps/iebs-sprint-dapp"

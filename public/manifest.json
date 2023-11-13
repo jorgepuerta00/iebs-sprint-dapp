@@ -1,0 +1,16 @@
+{
+	"short_name": "herd-dapp-template",
+	"name": "Horses Racecourses Dapp",
+	"description": "Horses Racecourses Dapp",
+	"icons": [
+		{
+			"src": "favicon.ico",
+			"sizes": "32x32",
+			"type": "image/x-icon"
+		}
+	],
+	"start_url": ".",
+	"display": "standalone",
+	"theme_color": "#ff007a",
+	"background_color": "#fff"
+}

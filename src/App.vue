@@ -8,7 +8,7 @@ import {
   WalletConnectConnector,
   useWallet,
 } from "vue-dapp";
-import LayoutHeader from "./components/LayoutHeader.vue";
+import LayoutHeader from "./components/shared/Header.vue";
 
 const { onDisconnect, onAccountsChanged, onChainChanged } = useWallet();
 
@@ -20,27 +20,23 @@ let connectors: Connector[] = [
     appUrl: "http://localhost:3000",
   }),
   new WalletConnectConnector({
-    projectId: "3f3c98042b194264687bf59e104c534a",
+    projectId: "8e51256b59987072be8b6159414fe8a5",
     chains: [1],
     showQrModal: true,
     qrModalOptions: {
       themeMode: "dark",
       themeVariables: undefined,
-      //chainImages: undefined,
       desktopWallets: undefined,
       walletImages: undefined,
       mobileWallets: undefined,
       enableExplorer: true,
-      //explorerAllowList: undefined,
-      //tokenImages: undefined,
       privacyPolicyUrl: undefined,
-      //explorerDenyList: undefined,
       termsOfServiceUrl: undefined,
     },
   }),
   new CoinbaseWalletConnector({
     appName: "Vue Dapp",
-    jsonRpcUrl: `https://mainnet.infura.io/v3/${infuraId}`,
+    jsonRpcUrl: `https://sepolia.infura.io/v3/${infuraId}`,
   }),
 ];
 

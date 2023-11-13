@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useEthers, useEthersHooks } from "vue-dapp";
-import { useToken } from "../composables/useToken";
+import { useToken } from "../../composables/useToken";
 
 const tokenAddress = import.meta.env.VITE_ERC20_CONTRACT_ADDRESS;
 
@@ -13,6 +13,7 @@ export default defineComponent({
     const { onActivated, onDeactivated, onChanged } = useEthersHooks();
 
     onActivated(({ provider, address }) => {
+      console.log("activated");
       call(provider, tokenAddress, address);
     });
 

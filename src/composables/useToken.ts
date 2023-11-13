@@ -1,36 +1,8 @@
 import { ref } from 'vue'
 import { Web3Provider } from '@ethersproject/providers'
-import { useMulticall, type ContractCall, ERC20Interface } from 'vue-dapp'
 import { BigNumber } from '@ethersproject/bignumber'
-
-const calls: ContractCall[] = [
-	{
-		interface: ERC20Interface,
-		address: '',
-		method: 'name',
-	},
-	{
-		interface: ERC20Interface,
-		address: '',
-		method: 'totalSupply',
-	},
-	{
-		interface: ERC20Interface,
-		address: '',
-		method: 'decimals',
-	},
-	{
-		interface: ERC20Interface,
-		address: '',
-		method: 'symbol',
-	},
-	{
-		interface: ERC20Interface,
-		address: '',
-		method: 'balanceOf',
-		args: [],
-	},
-]
+import { ethers } from 'ethers'
+import contractAbi from "../contracts/SiliquaCoin.json";
 
 export function useToken() {
 	const name = ref('')
@@ -41,32 +13,18 @@ export function useToken() {
 
 	async function call(provider: Web3Provider, tokenAddress: string, userAddress: string) {
 		try {
-			const calls = genCalls(tokenAddress, userAddress)
-			const { call, results } = useMulticall(provider)
+			const abi = contractAbi.abi;
+			const erc20 = new ethers.Contract(tokenAddress, abi, provider);
 
-			await call(calls)
-
-			const [[_name], [_totalSupply], [_decimals], [_symbol], { balance: _balance }] = results.value
-
-			name.value = _name
-			totalSupply.value = _totalSupply
-			decimals.value = _decimals
-			symbol.value = _symbol
-			balance.value = (_balance as BigNumber).toBigInt()
+			name.value = await erc20.name();
+			totalSupply.value = ethers.utils.formatUnits(await erc20.totalSupply()) as unknown as bigint;
+			decimals.value = await erc20.decimals()
+			symbol.value = await erc20.symbol()
+			balance.value = (await erc20.balanceOf(userAddress) as BigNumber).toBigInt()
 		}
 		catch (error) {
 			console.error("an error occurred while calling the token contract")
 		}
-	}
-
-	function genCalls(tokenAddress: string, userAddress: string) {
-		return calls.map(call => {
-			call.address = tokenAddress
-			if (call.method === 'balanceOf' || call.method === 'allowance') {
-				call.args = [userAddress]
-			}
-			return call
-		})
 	}
 
 	return {

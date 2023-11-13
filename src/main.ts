@@ -15,7 +15,6 @@ app.use(router)
 app.use(store)
 app.use(VueDapp, {
   autoConnect: true,
-  dumb: false,
   networks: {
     80001: {
       chainId: ethers.utils.hexValue(80001),
@@ -42,10 +41,10 @@ app.use(VueDapp, {
     11155111: {
       chainId: ethers.utils.hexValue(11155111),
       blockExplorerUrls: ['https://sepolia.etherscan.io/'],
-      chainName: 'SePolia',
+      chainName: 'Sepolia',
       rpcUrls: [`https://sepolia.infura.io/v3/${infuraId}`],
       nativeCurrency: {
-        name: 'SePolia',
+        name: 'sepolia',
         symbol: 'SepoliaETH',
         decimals: 18,
       },

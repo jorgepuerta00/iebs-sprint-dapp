@@ -65,10 +65,9 @@ onChanged(() => {
   isChainChanged.value = true;
 });
 
-// For turning back to previous chainId without calling switchChain() again
 const switchError = ref(false);
 watch(selectedChainId, async (val, oldVal) => {
-  if (oldVal === 0) return; // ignore initial change
+  if (oldVal === 0) return;
   if (switchError.value) {
     switchError.value = false;
     return;
@@ -98,7 +97,11 @@ watch(selectedChainId, async (val, oldVal) => {
           >
             <div class="flex space-x-4 items-center">
               <!-- logo -->
-              <img class="h-10 min-w-10" src="../assets/logo.png" alt="logo" />
+              <img
+                class="h-10 min-w-10"
+                src="../../assets/logo.png"
+                alt="logo"
+              />
               <p class="hover:text-gray-900">Racecourses Dapp</p>
             </div>
           </router-link>

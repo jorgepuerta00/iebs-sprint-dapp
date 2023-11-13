@@ -5,6 +5,9 @@ import inject from '@rollup/plugin-inject'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+	server: {
+		port: 5173
+	},
 	plugins: [vue()],
 	resolve: {
 		alias: { ...nodeStdlibBrowser },

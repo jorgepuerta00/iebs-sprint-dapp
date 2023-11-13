@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  iebs-frontend-dapp:
+    container_name: iebs-frontend-dapp
+    image: node:lts
+    working_dir: /var/www/html/app/
+    entrypoint: /bin/bash
+    expose:
+      - 5173
+    volumes:
+      - ./frontend/:/var/www/html/app
+    tty: true

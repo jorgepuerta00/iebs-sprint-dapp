@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useEthers } from "vue-dapp";
 import { ethers } from "ethers";
 import Token from "../components/Token.vue";
+import Web3, { ETH_DATA_FORMAT } from "web3";
 import contractAbi from "../contracts/SiliquaCoin.json";
 
 const infuraId: string = import.meta.env.VITE_INFURA_KEY;
@@ -72,9 +73,13 @@ function calculateEthEquivalent() {
   if (ethAmount.value && !isNaN(parseFloat(ethAmount.value.toString()))) {
     const userEnteredAmount = parseFloat(ethAmount.value.toString());
     const equivalentEth = userEnteredAmount * TOKEN_TO_ETH_RATE;
-    return equivalentEth.toFixed(3);
+    return equivalentEth;
   }
-  return "0.000";
+  return 0;
+}
+
+function amountFixed() {
+  return calculateEthEquivalent().toFixed(3);
 }
 
 async function buyTokens() {
@@ -92,51 +97,31 @@ async function buyTokens() {
     }
 
     // Configuring the connection to an Ethereum node
-    const provider = new ethers.providers.InfuraProvider(
-      activeNetwork.chainName.toLowerCase(),
-      infuraId
-    );
-
-    const latest_block = await provider.getBlockNumber();
-    console.log("Latest block number:", latest_block);
-
-    await provider.send("eth_requestAccounts", []);
+    const { ethereum } = window as any;
+    await ethereum.send("eth_requestAccounts");
+    const provider = new ethers.providers.Web3Provider(ethereum);
 
     // Creating a signing account from a private key
-    const signer = provider.getSigner(address.value);
+    const signer = provider.getSigner();
+    console.log("signer: " + (await signer.getAddress()));
 
-    // Creating and sending the transaction object
+    // send transaction
     const tx = await signer.sendTransaction({
       to: contractAddress,
-      value: ethers.utils.parseEther(calculateEthEquivalent().toString()), // Convert ETH to wei
+      value: ethers.utils.parseEther(calculateEthEquivalent().toString()),
     });
-
-    console.log("Mining transaction...");
-    console.log(`${activeNetwork.blockExplorerUrls}/tx/${tx.hash}`);
-
-    // Waiting for the transaction to be mined
-    const receipt = await tx.wait();
-
-    // The transaction is now on chain!
-    console.log(`Mined in block ${receipt.blockNumber}`);
 
     buyingSuccess.value = true;
     buying.value = "Tokens bought successfully";
     return Promise.resolve(tx);
   } catch (error: any) {
-    if (error?.error?.error?.data) {
-      console.error(JSON.stringify(error.error.error.data.reason, null, 2));
-      buyError.value = error.error.error.data.reason;
+    if (error?.reason) {
+      buyError.value = error.reason;
     } else {
-      const errorString = error.message || JSON.stringify(error, null, 2);
-      if (errorString.includes("INSUFFICIENT_FUNDS")) {
-        buyError.value = "You don't have enough ETH to buy SILQ";
-      } else {
-        buyError.value = "An error occurred while buying tokens.";
-      }
-      console.error("An error occurred while buying tokens:", errorString);
+      buyError.value = "An error occurred while buying tokens.";
     }
     buyingSuccess.value = false;
+    console.error(JSON.stringify(error, null, 2));
   }
 }
 
@@ -154,19 +139,32 @@ async function claimTokens() {
       return;
     }
 
-    const provider = new ethers.providers.JsonRpcProvider(
-      activeNetwork.rpcUrls[0]
-    );
-    const signer = provider.getSigner(address.value);
-    console.log(await signer.getAddress());
-    const network = await provider.getNetwork();
-    console.log(network.chainId);
+    // Configuring the connection to an Ethereum node
+    const { ethereum } = window as any;
+    await ethereum.send("eth_requestAccounts");
+    const provider = new ethers.providers.Web3Provider(ethereum);
+
+    // Creating a signing account from a private key
+    const signer = provider.getSigner();
+    console.log("signer: " + (await signer.getAddress()));
+
+    // Creating a contract instance
     const abi = contractAbi.abi;
     const currentContract = new ethers.Contract(contractAddress, abi, signer);
     console.log(await currentContract.name());
     console.log(await currentContract.symbol());
 
+    // Creating and sending the transaction object
     const tx = await currentContract.claimTokens();
+
+    console.log("Mining transaction...");
+    console.log(`${activeNetwork.blockExplorerUrls}/tx/${tx.hash}`);
+
+    // Waiting for the transaction to be mined
+    const receipt = await tx.wait();
+
+    // The transaction is now on chain!
+    console.log(`Mined in block ${receipt.blockNumber}`);
     console.log("claiming tokens");
     console.log(tx);
 
@@ -174,17 +172,13 @@ async function claimTokens() {
     claiming.value = "Tokens claimed successfully";
     return Promise.resolve(tx);
   } catch (error: any) {
-    if (error?.error?.error?.data) {
-      console.error(JSON.stringify(error.error.error.data.reason, null, 2));
-      claimError.value = error.error.error.data.reason;
+    if (error?.reason) {
+      claimError.value = error.reason;
     } else {
-      console.error(
-        "An error occurred while claiming tokens:",
-        error.message || JSON.stringify(error, null, 2)
-      );
       claimError.value = "An error occurred while claiming tokens.";
     }
     claimSuccess.value = false;
+    console.error(JSON.stringify(error, null, 2));
   }
 }
 </script>
@@ -272,7 +266,7 @@ async function claimTokens() {
                 </div>
               </form>
               <p class="conversion-label" v-if="ethAmount">
-                Equivalent to: {{ calculateEthEquivalent() }} ETH
+                Equivalent to: {{ amountFixed() }} ETH
               </p>
               <p class="success" v-if="buyingSuccess">{{ buying }}</p>
               <p class="failure" v-if="!buyingSuccess">{{ buyError }}</p>

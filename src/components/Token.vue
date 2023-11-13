@@ -13,7 +13,6 @@ export default defineComponent({
     const { onActivated, onDeactivated, onChanged } = useEthersHooks();
 
     onActivated(({ provider, address }) => {
-      console.log("activated");
       call(provider, tokenAddress, address);
     });
 

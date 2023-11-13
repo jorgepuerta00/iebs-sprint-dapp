@@ -3,6 +3,8 @@ import App from './App.vue'
 import router from './router'
 import { VueDapp } from 'vue-dapp'
 import { ethers } from 'ethers'
+import store from './store/store'
+
 const infuraId = import.meta.env.VITE_INFURA_KEY;
 
 import './style.css'
@@ -10,6 +12,7 @@ import './style.css'
 const app = createApp(App)
 
 app.use(router)
+app.use(store)
 app.use(VueDapp, {
   autoConnect: true,
   dumb: false,
